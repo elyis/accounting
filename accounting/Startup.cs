@@ -1,5 +1,8 @@
 ﻿using accounting.src.Data;
 using accounting.src.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -23,7 +26,11 @@ namespace accounting
             string secretKey = jwtSettings.GetValue<string>("Key")!;
 
 
-            services.AddControllers().AddNewtonsoftJson();
+            services
+                .AddControllers(options => 
+                    options.OutputFormatters.RemoveType<HttpNoContentOutputFormatter>())
+                .AddNewtonsoftJson();
+
             services.AddEndpointsApiExplorer();
 
 
@@ -35,12 +42,19 @@ namespace accounting
                     Title = "Accounting Api",
                     Description = "Api for game of mediicine university",
                 });
+
                 options.EnableAnnotations();
             });
+
             services.AddDbContext<AppDbContext>();
 
 
-            services.AddAuthentication()
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
                 .AddJwtBearer(
                     options => options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -53,6 +67,15 @@ namespace accounting
                 );
             services.AddAuthorization();
 
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.MaxRequestBodySize = null;
+            });
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.Limits.MaxRequestBodySize = null;
+            });
+
         }
 
         public void Configure(WebApplication app)
@@ -62,6 +85,7 @@ namespace accounting
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseHttpLogging();
 
             app.UseAuthentication();
             app.UseAuthorization();

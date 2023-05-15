@@ -1,10 +1,8 @@
 ﻿using accounting.src.Entity.Response;
 using accounting.src.Utility;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System.Runtime.CompilerServices;
 
 namespace accounting.src.Models
 {
@@ -64,6 +62,9 @@ namespace accounting.src.Models
         public string? RecoveryCode { get; set; }
         public bool WasPasswordResetRequest { get; set; } = false;
 
+        public List<MaterialAccounting> MaterialAccountings { get; set; } = new();
+        public List<ProductAccounting> ProductAccountings { get; set; } = new();
+
         public UserBody ToUserBody()
         {
             UserBody body = new UserBody
@@ -74,7 +75,7 @@ namespace accounting.src.Models
                 Phone = Phone,
                 Email = Email,
                 Role = (UserRole)Enum.Parse(typeof(UserRole), Role),
-                ImageUrl = Image.IsNullOrEmpty() ? null : $"{Constants.webPathToProfileIcons}{Image}"
+                ImageUrl = Image == null ? null : $"{Constants.webPathToProfileIcons}{Image}"
             };
 
             return body;

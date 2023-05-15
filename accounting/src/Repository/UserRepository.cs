@@ -77,6 +77,12 @@ namespace accounting.src.Repository
             .Where(user => user.Id != id)
             .Select(user => user.ToUserBody()).ToList();
 
+        public IEnumerable<User> GetUsers(UserRole role)
+        {
+            var roleName = Enum.GetName(typeof(UserRole), role);
+            return _context.Users.Where(e => e.Role == roleName);
+        }
+
         public async Task<TokenPair> ResetPassword(User user, string newPassword)
         {
             user.Password = Hmac512Provider.Compute(newPassword);

@@ -6,7 +6,7 @@ namespace accounting.src.Service
 {
     public class EmailService : IEmailService
     {
-        private static MailboxAddress _senderMail = new MailboxAddress("Oksei Accounts","elyi7367@gmail.com");
+        private static MailboxAddress _senderMail = new MailboxAddress("Oksei Accounts", "nastxs04@mail.ru");
 
         public async Task SendEmail(string email, string subject, string message)
         {
@@ -20,8 +20,8 @@ namespace accounting.src.Service
             };
 
             using var client = new SmtpClient();
-            await client.ConnectAsync("smtp.gmail.com", 587, false);
-            await client.AuthenticateAsync(_senderMail.Address, "pjmmmmppndqjviot");
+            await client.ConnectAsync("smtp.mail.ru", 587, false);
+            await client.AuthenticateAsync(_senderMail.Address, "ikM9FQ5T81xPriWcwkeZ");
             await client.SendAsync(emailMessage);
             await client.DisconnectAsync(true);
         }

@@ -18,5 +18,6 @@ namespace accounting.src.Core.IRepository
         Task<User?> UpdateAsync(Guid id, UpdateUserBody body);
         List<UserBody> GetUsers(Guid id);
         Task<User?> UpdateRole(string email, UserRole role);
+        IEnumerable<User> GetUsers(UserRole role);
     }
 }

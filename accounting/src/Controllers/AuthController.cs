@@ -84,15 +84,15 @@ namespace accounting.src.Controllers
         [SwaggerResponse((int)HttpStatusCode.OK, Description = "Recovery code has been sent")]
         [SwaggerResponse((int)HttpStatusCode.NotFound, Description = "User doesn't exist")]
 
-        public async Task<IActionResult> SendRecoveryCode([FromBody] string email)
+        public async Task<IActionResult> SendRecoveryCode(EmailBody body)
         {
-            var recoveryCode = await _userRepository.GenerateRecoveryCode(email);
+            var recoveryCode = await _userRepository.GenerateRecoveryCode(body.Email);
             if (recoveryCode == null)
                 return NotFound();
 
 
             await _emailService.SendEmail(
-                email: email,
+                email: body.Email,
                 subject: "Восстановление доступа к аккаунту",
                 message: $"Код восстановления: {recoveryCode}. " +
                 $"Если это были не вы, проигнорируйте данное сообщение");
@@ -120,7 +120,7 @@ namespace accounting.src.Controllers
 
         [HttpPost("reset")]
         [SwaggerOperation(Summary = "reset password")]
-        [SwaggerResponse((int)(HttpStatusCode.OK), Description = "Reset password", Type = typeof(TokenPair))]
+        [SwaggerResponse((int)(HttpStatusCode.OK), Description = "Reset password")]
         [SwaggerResponse((int)HttpStatusCode.BadRequest, Description = "invalid code or code timed out")]
         [SwaggerResponse((int)HttpStatusCode.NotFound, Description = "User doesn't exist")]
 
@@ -134,8 +134,9 @@ namespace accounting.src.Controllers
                 return BadRequest();
 
             await _emailService.SendEmail(body.Email, "Пароль был изменен", "");
-            var tokenPair = await _userRepository.ResetPassword(user, body.Password);
-            return Ok(tokenPair);
+            return Ok();
         }
+
+
     }
 }
