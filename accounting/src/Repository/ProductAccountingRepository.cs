@@ -49,10 +49,12 @@ namespace accounting.src.Repository
             _context = context;
         }
 
+        //Создать продажу
         public async Task<ProductAccounting?> AddAsync(CreateSaleBody body, User author, TypeOfGoodsAccounting type)
         {
             var listOfAccountingProduct = new List<AmountOfAccountedProduct>();
 
+            //Проверка каждого продукта в списке на количество, которое мб собранно из имеющихся материалов
             foreach(var amountOfProduct in body.Products)
             {
                 var productId = Guid.Parse(amountOfProduct.Id);
@@ -125,6 +127,7 @@ namespace accounting.src.Repository
             return sale;
         }
 
+        //Получить все продажи или конкретного пользователя
         public IEnumerable<ProductAccounting> GetAll(Guid? userId)
         {
             if(userId != null)
@@ -140,6 +143,7 @@ namespace accounting.src.Repository
                         .ThenInclude(e => e.Product);
         }
 
+        //Получить все продажи или конкретного пользователя на указанный месяц
         private IEnumerable<ProductAccounting> GetAllByMonth(DateTime date, Guid? userId = null)
         {
             var currentMonth = date.Month;
@@ -161,6 +165,8 @@ namespace accounting.src.Repository
                 .Where(e => e.CreatedAt.Month == currentMonth && e.CreatedAt.Year == currentYear);
         }
 
+
+        //Получить все продажи или конкретного пользователя за день
         public IEnumerable<ProductAccounting> GetAllByDay(DateTime date, Guid? userId = null)
         {
             var dateonly = DateOnly.FromDateTime(date);
@@ -182,6 +188,7 @@ namespace accounting.src.Repository
 
 
 
+        //Получить продажу по id
         public async Task<ProductAccounting?> GetAsync(Guid id)
             => await _context.ProductAccountings
                     .Include(e => e.CreatedBy)
@@ -189,6 +196,7 @@ namespace accounting.src.Repository
                         .ThenInclude(e => e.Product)
                     .FirstOrDefaultAsync(e => e.Id == id);
 
+        //Вычислить запрлату по таблице прибыли и продаж
         private float CalculateSalaryForIncome(float income)
         {
             var topBorder = _profitBasedPremiumCalculationTable.First(e => e.Item1 > income);
@@ -200,20 +208,13 @@ namespace accounting.src.Repository
             return salary;
         }
 
-        public IncomeForAllMonths? GetProfitOfTheMonths(Guid userId)
+        //Расчитать статистику продавца по продажам за текущий день и за месяц
+        public IncomeForAllMonths GetProfitOfTheMonths(Guid userId)
         {
             var listOfProfitByMonths = new List<IncomePerDate>();
             var listOfProfitByCurrentMonth = new List<IncomePerDate>();
 
             var currentDate = DateTime.UtcNow;
-            var firstSale = _context.ProductAccountings
-                    .Include(e => e.CreatedBy)
-                    .OrderBy(e => e.CreatedAt)
-                    .FirstOrDefault(e => e.CreatedBy.Id == userId);
-            if (firstSale == null)
-                return null;
-
-            
             var salesByCurrentMonth = GetAllByMonth(currentDate, userId).GroupBy(e => e.CreatedAt.Day).OrderBy(e => e.Key).ToList();
 
             for(int currentDay = 1, currentSalesByDay = 0; currentDay <= DateTime.UtcNow.Day; currentDay++)
@@ -272,6 +273,7 @@ namespace accounting.src.Repository
             return incomeForAllMonths;
         }
 
+        //Обновить фота продаж
         public async Task UploadImages(IFormFileCollection files, Guid id)
         {
             var filenames = new List<string>();
@@ -287,6 +289,7 @@ namespace accounting.src.Repository
             await _context.SaveChangesAsync();
         }
 
+        //Получить статистику по всем продавцам за день и месяц и по статистику за текущий день
         public ManagerAnalyticsBody GetManagerAnalytics(IEnumerable<User> sellers)
         {
             var listOfSellerSalesForToday = new List<SellerIncomeBody>();

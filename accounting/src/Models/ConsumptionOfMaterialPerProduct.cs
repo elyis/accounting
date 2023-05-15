@@ -2,6 +2,8 @@
 
 namespace accounting.src.Models
 {
+    //Many to many - Количество затраченного материала на производство продукта
+
     public class ConsumptionOfMaterialPerProduct
     {
         public Guid ProductId { get; set; }

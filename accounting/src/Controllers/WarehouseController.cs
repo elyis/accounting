@@ -20,6 +20,7 @@ namespace accounting.src.Controllers
             _materialRepository = new MaterialRepository(context);
         }
 
+
         [HttpGet("materials"), Authorize]
         [SwaggerOperation(Summary = "Получить все материалы со склада")]
         [SwaggerResponse((int) HttpStatusCode.OK, Type = typeof(List<AmountOfMaterial>))]

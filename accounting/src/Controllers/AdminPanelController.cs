@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
 
+
+//Доступ только токенам, где есть полезная нагрузка роли(claim) == Administrator
+
 namespace accounting.src.Controllers
 {
     [Route("api")]
@@ -20,6 +23,8 @@ namespace accounting.src.Controllers
         {
             _userRepository = new UserRepository(context);
         }
+
+
 
         [HttpGet("users")]
         [SwaggerOperation(Summary = "Получить всех пользователей")]
@@ -33,6 +38,8 @@ namespace accounting.src.Controllers
             var users = _userRepository.GetUsers(id);
             return Ok(users);
         }
+
+
 
         [HttpPut("user")]
         [Authorize(Roles = "Administrator")]

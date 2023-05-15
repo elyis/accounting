@@ -10,7 +10,7 @@ namespace accounting.src.Core.IRepository
         Task<ProductAccounting?> AddAsync(CreateSaleBody body, User author, TypeOfGoodsAccounting type);
         Task UploadImages(IFormFileCollection files, Guid id);
         IEnumerable<ProductAccounting> GetAll(Guid? userId = null);
-        IncomeForAllMonths? GetProfitOfTheMonths(Guid userId);
+        IncomeForAllMonths GetProfitOfTheMonths(Guid userId);
         Task<ProductAccounting?> UpdateAsync(CreateSaleBody body, Guid saleId);
         ManagerAnalyticsBody GetManagerAnalytics(IEnumerable<User> sellers);
     }

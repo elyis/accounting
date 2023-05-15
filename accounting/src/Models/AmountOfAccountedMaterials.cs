@@ -1,5 +1,6 @@
 ﻿namespace accounting.src.Models
 {
+    //Many to many - Элемент списка затраченных материалов
     public class AmountOfAccountedMaterials
     {
         public Guid MaterialAccountingId { get; set; }

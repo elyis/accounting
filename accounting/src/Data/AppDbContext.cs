@@ -3,6 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace accounting.src.Data
 {
+
+    /*
+        Контекст для взаимодействия с базой данных
+        Он легковесный и создается при каждом запросе клиента к серверу
+        DbSet - таблицы
+    */
+
     public class AppDbContext : DbContext
     {
         private readonly IConfiguration _config;
@@ -19,6 +26,9 @@ namespace accounting.src.Data
         }
 
 
+        //Настройки подключения и взаимодействия с базой данных
+        //Включено подробное логирование ошибок и запросов
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var connectionString = _config.GetConnectionString("DefaultConnection");
@@ -29,6 +39,7 @@ namespace accounting.src.Data
             base.OnConfiguring(optionsBuilder);
         }
 
+        //Настройка связей таблиц (1 к 1; 1 к многим  ...)
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         { 
             modelBuilder.Entity<ConsumptionOfMaterialPerProduct>(options =>

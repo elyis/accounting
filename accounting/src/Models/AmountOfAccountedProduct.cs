@@ -1,5 +1,7 @@
 ﻿namespace accounting.src.Models
 {
+    //Many to many - элемент списка продаж продукта
+
     public class AmountOfAccountedProduct
     {
         public Guid ProductAccountingId { get; set; }

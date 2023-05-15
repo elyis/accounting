@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
 
+
+//Api аналитики
 namespace accounting.src.Controllers
 {
     [Route("api/analytics")]
@@ -23,25 +25,22 @@ namespace accounting.src.Controllers
             _userRepository = new UserRepository(context);
         }
 
+
+
         [HttpGet("sales")]
         [SwaggerOperation("Получить статистику продаж за текущий месяц и предыдущие")]
         [SwaggerResponse((int)HttpStatusCode.OK, Type = typeof(IncomeForAllMonths))]
         public IActionResult GetIncomeByMonths()
         {
+            //Извлекает id пользователя из токена
             string token = Request.Headers.Authorization;
             var userId = JwtManager.GetClaimId(token);
             var result = _productAccountingRepository.GetProfitOfTheMonths(userId);
 
-            
-            return result != null ? Ok(result) : Ok(new IncomeForAllMonths
-            {
-                Currency = Currency.Rub,
-                SoldToday = 0,
-                EarningForToday = 0,
-                EarningThisMonth = new(),
-                MonthlyEarnings = new(),
-            });
+            return Ok(result);
         }
+
+
 
         [HttpGet("sellers")]
         [SwaggerOperation(Summary = "Получить статистику продаж продавцов")]
@@ -49,7 +48,10 @@ namespace accounting.src.Controllers
 
         public IActionResult GetManagerAnalytics()
         {
+            //Получает всех пользователей у которых роль - продавец
             var sellers = _userRepository.GetUsers(UserRole.Seller);
+
+            //Получает отчет о продажах всех работников и об доходе за сегодня
             var result = _productAccountingRepository.GetManagerAnalytics(sellers);
             return Ok(result);
         }

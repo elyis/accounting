@@ -4,6 +4,14 @@ using Newtonsoft.Json.Converters;
 
 namespace accounting.src.Models
 {
+    /*
+        Name - Наименование товара
+        Price - цена товара
+        Currency - валюта
+        Materials - Список материалов из которых состоит товар (one to many)
+        AccountedProducts - Список продаж, в которых находится
+    */
+
     public class Product
     {
         public Guid Id { get; set; }

@@ -14,9 +14,12 @@ namespace accounting.src.Repository
             _context = context;
         }
 
+        //Создать новый продукт
         public async Task<Product?> AddAsync(CreateProductBody body)
         {
             var materials = new List<ConsumptionOfMaterialPerProduct>();
+
+            //Для создания связи нужны ссылки на материлы
             foreach(var mat in body.Materials)
             {
                 var materialId = Guid.Parse(mat.Id);
@@ -24,6 +27,7 @@ namespace accounting.src.Repository
                 if(material == null)
                     return null;
 
+                //Затраты материала на товар
                 var materialPerProduct = new ConsumptionOfMaterialPerProduct 
                 { 
                     Material = material, 
@@ -45,6 +49,7 @@ namespace accounting.src.Repository
             return result.Entity;
         }
 
+        //Обновить информацию о товаре
         public async Task<Product?> UpdateAsync(CreateProductBody body, Guid productId)
         {
             var product = await GetAsync(productId);
@@ -75,6 +80,7 @@ namespace accounting.src.Repository
             return product;
         }
 
+        //Получить все товары по названию
         public IEnumerable<Product> GetAll(string? name)
         {
             var pattern = name ?? "";
@@ -87,6 +93,7 @@ namespace accounting.src.Repository
                                   $"%{pattern.ToLower()}%"));
         }
 
+        //Получить товар по id
         public async Task<Product?> GetAsync(Guid id)
             => await _context.Products
                     .Include(e => e.Materials)
@@ -94,6 +101,7 @@ namespace accounting.src.Repository
                      .FirstOrDefaultAsync(product => 
                                                 product.Id == id);
 
+        //Обновить фото товара
         public async Task<Product?> UpdateImage(Guid id, string image)
         {
             var product = await _context.Products.FindAsync(id);

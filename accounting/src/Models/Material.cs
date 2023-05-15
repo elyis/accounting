@@ -4,6 +4,14 @@ using Newtonsoft.Json.Converters;
 
 namespace accounting.src.Models
 {
+    /*
+        Name - наименование
+        Measure - в чем рассчитывается(см, шт)
+        Amount - количество
+        Products - в каких продуктах используется (необходим для связи many to many)
+        AccountedMaterials - к каким списаниям и начислениям принадлежит (необходим для связи many to many)
+    */
+
     public class Material
     {
         public Guid Id { get; set; }

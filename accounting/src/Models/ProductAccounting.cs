@@ -4,6 +4,16 @@ using System.Globalization;
 
 namespace accounting.src.Models
 {
+    /*
+        Учет продаж продуктов
+        Name - наименование продажи
+        CreatedAt - дата продажи
+        CheckPrice - конечная сумма продажи
+        Currency - валюта
+        CreatedBy - тот кто продал
+        AccountedProducts - список проданных товаров
+    */
+
     public class ProductAccounting
     {
         public Guid Id { get; set; }

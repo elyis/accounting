@@ -18,6 +18,7 @@ namespace accounting.src.Repository
             _context = context;
         }
 
+        //Добавить пользователя, захэшировав пароль и зашифровав почту
         public async Task<User?> AddAsync(SignUpBody body)
         {
             var user = await GetAsync(body.Email);
@@ -42,6 +43,8 @@ namespace accounting.src.Repository
             return null;
         }
 
+
+        //Сгенерировать код восстановления и сохранить его в базу
         public async Task<string?> GenerateRecoveryCode(string email, TimeSpan? interval = null)
         {
             interval ??= TimeSpan.FromMinutes(10.0);
@@ -57,35 +60,41 @@ namespace accounting.src.Repository
             return user.RecoveryCode;
         }
 
+
+        //Получить пользователя по id
         public Task<User?> GetAsync(Guid id)
             => _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
+        //Получить пользователя по почте
         public Task<User?> GetAsync(string email)
         {
             var encryptedEmail = Aes256Provider.Encrypt(email);
             return _context.Users.FirstOrDefaultAsync(u => u.Email == encryptedEmail);
         }
 
+        //Получить пользователя по токену
         public async Task<User?> GetByToken(string token)
         {
-            //var tokenHash = Hmac512Provider.Compute(token);
             return await _context.Users.FirstOrDefaultAsync(u => u.Token.Equals(token));
         }
 
+        //Получить всех пользователей, кроме указанного
         public List<UserBody> GetUsers(Guid id)
             => _context.Users
             .Where(user => user.Id != id)
             .Select(user => user.ToUserBody()).ToList();
 
+        //Получить всех пользователей по роли
         public IEnumerable<User> GetUsers(UserRole role)
         {
             var roleName = Enum.GetName(typeof(UserRole), role);
             return _context.Users.Where(e => e.Role == roleName);
         }
 
+        //Сбросить пароль
         public async Task<TokenPair> ResetPassword(User user, string newPassword)
         {
-            user.Password = Hmac512Provider.Compute(newPassword);
+            user.Password = newPassword;
             user.WasPasswordResetRequest = false;
             user.RecoveryCodeValidBefore = null;
 
@@ -107,6 +116,7 @@ namespace accounting.src.Repository
             return user;
         }
 
+        //Обновить информацию о фото
         public async Task<bool> UpdateImage(Guid id, string filename)
         {
             var user = await GetAsync(id);
@@ -118,6 +128,7 @@ namespace accounting.src.Repository
             return true;
         }
 
+        //Обновить роль пользователя
         public async Task<User?> UpdateRole(string email, UserRole role)
         {
             var user = await GetAsync(email);
@@ -129,6 +140,7 @@ namespace accounting.src.Repository
             return user;
         }
 
+        //Обновить refresh token
         public async Task UpdateToken(Guid id, string token)
         {
             var user = await GetAsync(id);

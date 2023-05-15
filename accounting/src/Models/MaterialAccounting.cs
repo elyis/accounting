@@ -1,9 +1,18 @@
 ﻿using accounting.src.Entity;
 using accounting.src.Entity.Response;
-using System.Globalization;
 
 namespace accounting.src.Models
 {
+    /*
+        Учет материалов (списания и начисления)
+        Name - Наименование (Завоз за январь)
+        CreatedAt - дата списания/начисления
+        Type - списание или начисление
+        CreatedBy - тот кто добавил запись
+        AccountedMaterials - какие именно материалы начислены/списаны 
+        Images - список фото при начислении/списании
+    */
+
     public class MaterialAccounting
     {
         public Guid Id { get; set; }

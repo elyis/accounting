@@ -9,38 +9,18 @@ namespace accounting.src.Models
     [Index("Email", IsUnique = true)]
     public class User
     {
-        private string firstName;
-        private string lastName;
-        private string patronymic;
-        private string phone;
         private string email;
         private string password;
 
 
         public Guid Id { get; set; }
         public string FirstName { get; set; }
-        //{ 
-        //    get => Aes256Provider.Decrypt(firstName); 
-        //    set => firstName = Aes256Provider.Encrypt(value);
-        //}
 
         public string LastName { get; set; }
-        //{
-        //    get => Aes256Provider.Decrypt(lastName);
-        //    set => lastName = Aes256Provider.Encrypt(value);
-        //}
 
         public string Patronymic { get; set; }
-        //{
-        //    get => Aes256Provider.Decrypt(patronymic);
-        //    set => patronymic = Aes256Provider.Encrypt(value);
-        //}
 
         public string Phone { get; set; }
-        //{
-        //    get => Aes256Provider.Decrypt(phone);
-        //    set => phone = Aes256Provider.Encrypt(value);
-        //}
 
         public string Email
         {
